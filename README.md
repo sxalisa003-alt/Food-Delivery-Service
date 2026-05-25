@@ -259,3 +259,5 @@ SELECT
      + COALESCE(`brand_pack_discount`, 0)) AS `total_discount`
 FROM `food_delivery`.`deliver_history`;
 ```
+
+
