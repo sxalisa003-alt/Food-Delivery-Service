@@ -75,7 +75,7 @@ Additional validation checks were performed on restaurant IDs, order IDs, rating
 The cleaning engine enforces quality across five distinct validation gates to prevent structural anomalies, data type mismatches, and logical inconsistencies from corrupting downstream production environments:
 
 ### 1. Structural Standardization
-* **The Problem:** The original CSV headers contained irregular spacing, trailing blanks, mixed casing, and special characters (`/`), which break SQL schema mapping and BI engine matching.
+* **The Problem:** The original CSV file headers contained irregular spacing, trailing blanks, mixed casing, and special characters (`/`), which break SQL schema mapping and BI engine matching.
 * **The Fix:** Column headers are programmatically stripped of whitespace, forced to lowercase, and standardized using clean `snake_case` syntax.
 
 ### 2. Chronological & Geospatial Normalization
@@ -87,9 +87,9 @@ The cleaning engine enforces quality across five distinct validation gates to pr
 * **ID Validation:** Enforces boundary constraints on transactional keys, filtering out records where IDs are $\le 0$ or non-numeric.
 
 ### 4. Financial & Operational Boundary Safety
-To maximize data retention for marketing metrics, a **Conditional Logic Gate** was implemented for numeric metrics:
-* **Financial Integrity:** Fields tracking financial transactions (`bill_subtotal`, `packaging_charges`, `total`) are evaluated. Negative charges are rejected as logical impossibilities, but legitimate missing values (`NaN`) are explicitly retained to avoid losing important data and significantly manipulating the overall analysis.
-* **Service Efficiency Metrics:** Kitchen Preparation Time (`kpt_duration_minutes`) and Rider Wait Time (`rider_wait_time_minutes`) are validated to ensure all recorded durations are in decimal but accurately reflect mm: ss.
+To maximize data retention for marketing metrics, a validation layer was implemented for numeric metrics:
+* **Financial Integrity:** Fields tracking financial transactions (`bill_subtotal`, `packaging_charges`, `total`) are evaluated. Negative charges are rejected as logical impossibilities, but legitimate missing values (`NaN`) are explicitly retained to avoid losing important data and unnecessarily distorting aggregate business metrics.
+* **Service Efficiency Metrics:** Kitchen Preparation Time and Rider Wait Time were validated to ensure all duration values were numeric and non-negative.
 * **Categorical Constraints:** Customer ratings are strictly bounded between 0.0 and 5.0. 
 
 ### 5. Textual Imputation
@@ -185,7 +185,7 @@ These views encapsulate core business logic—such as operational bucketing, com
 This view isolates systemic supply chain friction by pivoting unstructured, textual cancellation logs into separate numeric indicator metrics, categorized by geospatial delivery distances.
 
 * **Business Logic:** Uses conditional aggregation `COUNT(CASE WHEN...)` to group explicit breakdown types while preserving compatibility with database `ONLY_FULL_GROUP_BY` performance constraints.
-* **Analytical Value:** Directly exposes patterns showing if order cancellation distributions shift dramatically across short vs. long delivery journeys (e.g., distinguishing between a restaurant operational issue like "Kitchen is full" and customer impatience on far deliveries).
+* * Analytical Value: Helps identify whether cancellation behaviour changes across short- and long-distance deliveries, allowing the business to distinguish between operational failures and customer-driven cancellations.
 
 ```sql
 CREATE VIEW `food_delivery`.`nw_rejection_reasons` AS
@@ -260,4 +260,24 @@ SELECT
 FROM `food_delivery`.`deliver_history`;
 ```
 
+## Phase 3: Power BI Data Modelling & Dashboard Development
 
+After the cleaned dataset and SQL views were finalized, the data was imported into Power BI using Import Mode for improved dashboard performance and simplified report interactions.
+
+A relational data model was built using the transactional fact table (`deliver_history`) alongside supporting SQL views designed for operational analytics, discount analysis, and cancellation tracking.
+
+Additional DAX measures were created to support:
+* Revenue KPIs
+* Repeat customer analysis
+* Average Kitchen Preparation Time (KPT)
+* Average Rider Wait Time (RWT)
+* Cancellation rates
+* Customer segmentation metrics
+
+The final dashboard solution was structured into three analytical reporting pages:
+
+1. Executive Summary Dashboard  
+2. Marketing & Customer Analytics Dashboard  
+3. Operations & Delivery Performance Dashboard
+
+These dashboards were designed to provide both high-level business visibility and detailed operational analysis for restaurant, delivery, and customer performance monitoring.
