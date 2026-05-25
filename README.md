@@ -187,7 +187,7 @@ This view isolates systemic supply chain friction by pivoting unstructured, text
 * **Business Logic:** Uses conditional aggregation `COUNT(CASE WHEN...)` to group explicit breakdown types while preserving compatibility with database `ONLY_FULL_GROUP_BY` performance constraints.
 * * Analytical Value: Helps identify whether cancellation behaviour changes across short- and long-distance deliveries, allowing the business to distinguish between operational failures and customer-driven cancellations.
 
-```sql
+```mysql
 CREATE VIEW `food_delivery`.`nw_rejection_reasons` AS
 SELECT 
     (CASE
@@ -210,7 +210,7 @@ A comprehensive core layer that extends the base fact table by calculating granu
 * **Business Logic:** Features multi-tier CASE statements that programmatically segment continuous variables—Kitchen Preparation Time (kpt_duration_minutes) and Rider Wait Time (rider_wait_time_minutes)—into categorical performance groups.
 * **Analytical Value:** Eliminates the need to write heavy conditional logic in Power BI columns. By bucketing service times (0-10, 11-20, 21-30+ minutes) at the database level, it provides instant, low-latency filter attributes for operations dashboards tracking order-ready accuracy and customer complaints.
 
-```sql
+```mysql
 CREATE VIEW `food_delivery`.`vw_delivery_metrics` AS
 SELECT 
     `restaurant_id`, `restaurant_name`, `subzone`, `city`, `order_id`, 
@@ -241,7 +241,7 @@ A specialized marketing intelligence view designed to isolate gross transaction 
 * **Business Logic:** Implements defensive database engineering via COALESCE() to eliminate arithmetic errors caused by NULL values when consolidating multiple overlapping discount programs (restaurant_discount_promo, restaurant_discount_flat_offs, gold_discount, and brand_pack_discount).
 * **Analytical Value:** Creates a binary flag (Discount Applied vs. No Discount) along with a calculated absolute metric for total_discount. This lets analysts evaluate promotional health by directly testing whether discount strategies successfully increase total order margins or simply drain restaurant profits.
 
-```sql
+```mysql
 CREATE VIEW `food_delivery`.`vw_discount_flag` AS
 SELECT 
     `order_id`, `restaurant_name`, `subzone`, `total`,
