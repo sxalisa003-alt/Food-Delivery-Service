@@ -9,6 +9,7 @@ As the business scales across different restaurants and delivery zones, manageme
  * Operational Efficiency
  * Delivery Reliability
  * Cancellation Behaviour
+   
 The company aims to use data analytics and business intelligence to identify operational bottlenecks, understand customer behaviour, improve delivery performance, and optimize decision-making across restaurants and subzones.
 
 ## Core Problem Statement
@@ -35,8 +36,7 @@ This project aims to leverage SQL and Power BI to transform operational delivery
    * Which restaurants maintain the strongest customer satisfaction?
 
 ## Tools & Skills Used
-  * SQL
-  * Python
+  * MySQL
   * Power BI
   * DAX
   * Data modeling
@@ -44,6 +44,27 @@ This project aims to leverage SQL and Power BI to transform operational delivery
   * KPI analysis
   * Customer segmentation
   * Operational analytics
+  * Python
+  * Pandas
+  * CSV File Handling
 
+## Data Preparation
+
+### Data Validity Checks and Data Cleaning
+
+The dataset used for this project was sourced from Kaggle and contained historical food-delivery transaction data for restaurants operating across multiple subzones in the NCR of Delhi, India. Before analysis could begin, the raw dataset required significant preprocessing to improve consistency, remove invalid records, standardize formatting, and prepare the data for SQL and Power BI analysis. Python and the Pandas library were used for the entire data cleaning and transformation workflow.
+
+#### Objectives of the Cleaning Process
+* Standardize column formatting for easier querying and modelling
+* Correct inconsistent data types
+* Remove invalid or corrupted records
+* Handle missing values appropriately
+* Prepare date and numeric fields for time-series and KPI analysis
+* Ensure compatibility with MySQL and Power BI
+* Improve overall dataset reliability for business reporting
+
+#### Data Cleaning & Transformation Steps
+1. Loading the Dataset
+The raw CSV dataset was imported using Pandas:
 
 
